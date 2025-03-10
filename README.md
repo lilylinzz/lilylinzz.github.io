@@ -14,6 +14,5 @@ b.在要截斷的地方加入 <!--more-->
 
 
 參考:
-https://theme-next.js.org/docs/getting-started/configuration.html
-https://github.com/next-theme/awesome-next
-https://guiblogs.com/hexo30-6/
+插件: https://github.com/next-theme/awesome-next
+設定檔說明: https://guiblogs.com/hexo30-6/
