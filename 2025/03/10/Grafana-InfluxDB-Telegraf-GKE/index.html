@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lilylinzz.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="使用 GKE 建置 Grafana、InfluxDb、Telegraf 監控工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Grafana&#x2F;InfluxDB&#x2F;Telegraf (GKE)">
+<meta property="og:url" content="https://lilylinzz.github.io/2025/03/10/Grafana-InfluxDB-Telegraf-GKE/index.html">
+<meta property="og:site_name" content="Lily&#39;s blog">
+<meta property="og:description" content="使用 GKE 建置 Grafana、InfluxDb、Telegraf 監控工具">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-03-10T09:14:40.000Z">
+<meta property="article:modified_time" content="2025-03-10T10:00:34.039Z">
+<meta property="article:author" content="Lily Lin">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="gke">
+<meta property="article:tag" content="monitor">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lilylinzz.github.io/2025/03/10/Grafana-InfluxDB-Telegraf-GKE/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://lilylinzz.github.io/2025/03/10/Grafana-InfluxDB-Telegraf-GKE/","path":"2025/03/10/Grafana-InfluxDB-Telegraf-GKE/","title":"Grafana/InfluxDB/Telegraf (GKE)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Grafana/InfluxDB/Telegraf (GKE) | Lily's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Lily's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%BD%AEStorageClass"><span class="nav-number">1.</span> <span class="nav-text">建置StorageClass</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B-sc-yaml"><span class="nav-number">1.2.</span> <span class="nav-text">建立 sc.yaml</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%BD%AEGrafana"><span class="nav-number">2.</span> <span class="nav-text">建置Grafana</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-1"><span class="nav-number">2.1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B-grafana-yaml"><span class="nav-number">2.2.</span> <span class="nav-text">建立 grafana.yaml</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%BD%AEInfluxDB"><span class="nav-number">3.</span> <span class="nav-text">建置InfluxDB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-2"><span class="nav-number">3.1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B-influxdb-config-yaml"><span class="nav-number">3.2.</span> <span class="nav-text">建立 influxdb-config.yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B-influxdb-yaml"><span class="nav-number">3.3.</span> <span class="nav-text">建立 influxdb.yaml</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%BD%AETelegraf"><span class="nav-number">4.</span> <span class="nav-text">建置Telegraf</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-3"><span class="nav-number">4.1.</span> <span class="nav-text">配置:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B-telegraf-config-yaml"><span class="nav-number">4.2.</span> <span class="nav-text">建立 telegraf-config.yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B-telegraf-yaml"><span class="nav-number">4.3.</span> <span class="nav-text">建立 telegraf.yaml</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A3%9C%E5%85%85"><span class="nav-number">5.</span> <span class="nav-text">補充</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E8%B3%87%E6%96%99"><span class="nav-number">5.1.</span> <span class="nav-text">參考資料</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#influxdb%E6%93%8D%E4%BD%9C"><span class="nav-number">5.2.</span> <span class="nav-text">influxdb操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InitContainer"><span class="nav-number">5.3.</span> <span class="nav-text">InitContainer</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Lily Lin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="mailto:lingaadin@gmail.com" title="E-Mail → mailto:lingaadin@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://lilylinzz.github.io/2025/03/10/Grafana-InfluxDB-Telegraf-GKE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Lily Lin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lily's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Grafana/InfluxDB/Telegraf (GKE) | Lily's blog">
+      <meta itemprop="description" content="使用 GKE 建置 Grafana、InfluxDb、Telegraf 監控工具">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Grafana/InfluxDB/Telegraf (GKE)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2025-03-10 17:14:40 / 修改時間：18:00:34" itemprop="dateCreated datePublished" datetime="2025-03-10T17:14:40+08:00">2025-03-10</time>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">使用 GKE 建置 Grafana、InfluxDb、Telegraf 監控工具</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="建置StorageClass"><a href="#建置StorageClass" class="headerlink" title="建置StorageClass"></a>建置StorageClass</h2><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ul>
+<li>StorageClass</li>
+</ul>
+<h3 id="建立-sc-yaml"><a href="#建立-sc-yaml" class="headerlink" title="建立 sc.yaml"></a>建立 <code>sc.yaml</code></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: storage.k8s.io/v1</span><br><span class="line">kind: StorageClass</span><br><span class="line">metadata:</span><br><span class="line">  name: grafana</span><br><span class="line">  namespace: lily2</span><br><span class="line">provisioner: kubernetes.io/gce-pd</span><br><span class="line">parameters:</span><br><span class="line">  type: pd-standard</span><br><span class="line">reclaimPolicy: Delete #回收策略</span><br><span class="line">allowVolumeExpansion: true #可擴展</span><br><span class="line">volumeBindingMode: WaitForFirstConsumer</span><br><span class="line">#改為等到pod創建才綁定PV，預設是Immediate立即綁頂</span><br></pre></td></tr></table></figure>
+
+<p>apply</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f sc.yaml</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="建置Grafana"><a href="#建置Grafana" class="headerlink" title="建置Grafana"></a>建置Grafana</h2><h3 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h3><ul>
+<li>Grafana本人 - Deployment、Service </li>
+<li>數據儲存 - PVC</li>
+</ul>
+<h3 id="建立-grafana-yaml"><a href="#建立-grafana-yaml" class="headerlink" title="建立 grafana.yaml"></a>建立 <code>grafana.yaml</code></h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">grafana</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">lily2</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">grafana</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">grafana</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">grafana</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeSelector:</span></span><br><span class="line">        <span class="attr">cloud.google.com/gke-nodepool:</span> <span class="string">lily-pool</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">grafana</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">grafana/grafana-enterprise:9.0.2</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">        <span class="attr">env:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">GF_SECURITY_ADMIN_USER</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">lily</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">GF_SECURITY_ADMIN_PASSWORD</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">lily</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">3000</span></span><br><span class="line">        <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">grafana-pvc</span></span><br><span class="line">          <span class="attr">mountPath:</span> <span class="string">/var/lib/grafana</span></span><br><span class="line">	  <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">grafana-pvc</span></span><br><span class="line">        <span class="attr">persistentVolumeClaim:</span></span><br><span class="line">          <span class="attr">claimName:</span> <span class="string">grafana-pvc</span></span><br><span class="line">        <span class="comment"># resources:</span></span><br><span class="line">        <span class="comment">#   limits:</span></span><br><span class="line">        <span class="comment">#     memory: 200Mi</span></span><br><span class="line">        <span class="comment">#     cpu: 200m</span></span><br><span class="line">        <span class="comment">#   requests:</span></span><br><span class="line">        <span class="comment">#     cpu: 100m</span></span><br><span class="line">        <span class="comment">#     memory: 100Mi</span></span><br><span class="line">      <span class="comment">#pvc有權限問題，需加這段調整權限</span></span><br><span class="line">      <span class="attr">securityContext:</span></span><br><span class="line">        <span class="attr">runAsUser:</span> <span class="number">0</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">grafana-pvc</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">lily2</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">grafana</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">1Gi</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">grafana</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">lily2</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">LoadBalancer</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">grafana</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">3000</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">3000</span></span><br></pre></td></tr></table></figure>
+
+<p>apply</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; kubectl apply -f grafana.yaml</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<h2 id="建置InfluxDB"><a href="#建置InfluxDB" class="headerlink" title="建置InfluxDB"></a>建置InfluxDB</h2><h3 id="配置-2"><a href="#配置-2" class="headerlink" title="配置"></a>配置</h3><ul>
+<li>influxdb-config - ConfigMap </li>
+<li>存帳密資訊 - Secret</li>
+<li>InfluxDB本人 - StatefulSet、Service </li>
+<li>儲存數據 - PVC</li>
+</ul>
+<h3 id="建立-influxdb-config-yaml"><a href="#建立-influxdb-config-yaml" class="headerlink" title="建立 influxdb-config.yaml"></a>建立 <code>influxdb-config.yaml</code></h3><ul>
+<li>內容參考此篇 <a target="_blank" rel="noopener" href="https://hackmd.io/BNxmcbB3SM2PIL5MEXSpyg">[influxdb-config.yaml]</a></li>
+</ul>
+<h3 id="建立-influxdb-yaml"><a href="#建立-influxdb-yaml" class="headerlink" title="建立 influxdb.yaml"></a>建立 <code>influxdb.yaml</code></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  name: influxdb-secret</span><br><span class="line">  namespace: lily2</span><br><span class="line">type: Opaque</span><br><span class="line">stringData: </span><br><span class="line">  INFLUXDB_CONFIG_PATH: /etc/influxdb/influxdb.conf</span><br><span class="line">  INFLUXDB_DATABASE: test</span><br><span class="line">  INFLUXDB_USERNAME: admin2</span><br><span class="line">  INFLUXDB_PASSWORD: 123456</span><br><span class="line">---</span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: StatefulSet</span><br><span class="line">metadata:</span><br><span class="line">  name: influxdb</span><br><span class="line">  namespace: lily2</span><br><span class="line">  labels:</span><br><span class="line">    app: influxdb</span><br><span class="line">spec:</span><br><span class="line">  serviceName: influxdb</span><br><span class="line">  replicas: 1</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: influxdb</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: influxdb</span><br><span class="line">    spec:</span><br><span class="line">      nodeSelector:</span><br><span class="line">        cloud.google.com/gke-nodepool: lily-pool</span><br><span class="line">      containers:</span><br><span class="line">      - name: influxdb</span><br><span class="line">        image: influxdb:1.8.4</span><br><span class="line">        imagePullPolicy: IfNotPresent</span><br><span class="line">        ports:</span><br><span class="line">        - name: influxdb</span><br><span class="line">          containerPort: 8086</span><br><span class="line">          protocol: TCP</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: influxdb-data</span><br><span class="line">          mountPath: /var/lib/influxdb</span><br><span class="line">        - name: influxdb-config</span><br><span class="line">          mountPath: /etc/influxdb/influxdb.conf</span><br><span class="line">          subPath: influxdb.conf</span><br><span class="line">          readOnly: true</span><br><span class="line">        envFrom:</span><br><span class="line">        - secretRef:</span><br><span class="line">            name: influxdb-secret</span><br><span class="line">      volumes:</span><br><span class="line">      - name: influxdb-data</span><br><span class="line">        persistentVolumeClaim:</span><br><span class="line">          claimName: influxdb-pvc</span><br><span class="line">      - name: influxdb-config</span><br><span class="line">        configMap:</span><br><span class="line">         name: influxdb-config</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: influxdb</span><br><span class="line">  namespace: lily2</span><br><span class="line">spec:</span><br><span class="line">  type: ClusterIP</span><br><span class="line">  clusterIP: None</span><br><span class="line">  ports:</span><br><span class="line">    - port: 8086</span><br><span class="line">      targetPort: 8086</span><br><span class="line">      name: influxdb</span><br><span class="line">  selector:</span><br><span class="line">    app: influxdb</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: influxdb-pvc</span><br><span class="line">  namespace: lily2</span><br><span class="line">  labels:</span><br><span class="line">    app: influxdb</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 300Mi</span><br></pre></td></tr></table></figure>
+
+<p>apply</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; kubectl apply -f .</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="建置Telegraf"><a href="#建置Telegraf" class="headerlink" title="建置Telegraf"></a>建置Telegraf</h2><h3 id="配置-3"><a href="#配置-3" class="headerlink" title="配置:"></a>配置:</h3><ul>
+<li>telegraf-config - ConfigMap </li>
+<li>rbac - ClusterRole、ClusterRoleBinding、ServiceAccount</li>
+<li>telegraf - DaemonSet</li>
+</ul>
+<h3 id="建立-telegraf-config-yaml"><a href="#建立-telegraf-config-yaml" class="headerlink" title="建立 telegraf-config.yaml"></a>建立 <code>telegraf-config.yaml</code></h3><ul>
+<li>內容參考此篇 <a target="_blank" rel="noopener" href="https://hackmd.io/BNxmcbB3SM2PIL5MEXSpyg?view#telegrafconf">[telegraf-config.yaml]</a></li>
+</ul>
+<p>:::info<br>注意 telegraf.config 要加這段 [[inputs.kube_inventory]]<br>token 是從 ServiceAccount 創建的Secret取得</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[[inputs.kube_inventory]]</span><br><span class="line">  # URL for the kubernetes API</span><br><span class="line">  url = &quot;https://172.16.0.2&quot;</span><br><span class="line">  namespace = &quot;&quot;  </span><br><span class="line">  # namespace空著表示採集所有namespace</span><br><span class="line">  # bearer_token = &quot;/usr/local/telegraf/etc/telegraf/token.csv&quot; # 讀取存放token的檔案，或是用下列方法直接使用token</span><br><span class="line">  bearer_token_string = &quot;eyJhbGciOiJSUzI1NiIsImtp......&quot;</span><br><span class="line">  response_timeout = &quot;5s&quot;</span><br><span class="line">  insecure_skip_verify = true</span><br></pre></td></tr></table></figure>
+<p>:::</p>
+<h3 id="建立-telegraf-yaml"><a href="#建立-telegraf-yaml" class="headerlink" title="建立 telegraf.yaml"></a>建立 <code>telegraf.yaml</code></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: DaemonSet</span><br><span class="line">metadata:</span><br><span class="line">  name: telegraf</span><br><span class="line">  namespace: lily2</span><br><span class="line">  labels:</span><br><span class="line">    app: telegraf</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: telegraf</span><br><span class="line">  minReadySeconds: 5</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: telegraf</span><br><span class="line">    spec:</span><br><span class="line">      nodeSelector:</span><br><span class="line">        cloud.google.com/gke-nodepool: lily-pool</span><br><span class="line">      serviceAccountName: &quot;telegraf&quot;</span><br><span class="line">      containers:</span><br><span class="line">      - name: telegraf</span><br><span class="line">        image: telegraf:1.25.0</span><br><span class="line">        imagePullPolicy: IfNotPresent</span><br><span class="line">        resources:</span><br><span class="line">          limits:</span><br><span class="line">            memory: 200Mi</span><br><span class="line">            cpu: 200m</span><br><span class="line">          requests:</span><br><span class="line">            cpu: 100m</span><br><span class="line">            memory: 100Mi</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: telegraf-config</span><br><span class="line">          mountPath: /etc/telegraf/telegraf.conf</span><br><span class="line">          readOnly: true</span><br><span class="line">          subPath: telegraf.conf</span><br><span class="line">      terminationGracePeriodSeconds: 30</span><br><span class="line">      volumes:</span><br><span class="line">      - name: telegraf-config</span><br><span class="line">        configMap:</span><br><span class="line">          name: telegraf-config</span><br><span class="line">---</span><br><span class="line">kind: ClusterRole</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: influx:cluster:viewer</span><br><span class="line">  namespace: lily2</span><br><span class="line">  labels:</span><br><span class="line">    rbac.authorization.k8s.io/aggregate-view-telegraf: &quot;true&quot;</span><br><span class="line">rules:</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;persistentvolumes&quot;, &quot;nodes&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;]</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">kind: ClusterRole</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: influx:telegraf</span><br><span class="line">  namespace: lily2</span><br><span class="line">aggregationRule:</span><br><span class="line">  clusterRoleSelectors:</span><br><span class="line">    - matchLabels:</span><br><span class="line">        rbac.authorization.k8s.io/aggregate-view-telegraf: &quot;true&quot;</span><br><span class="line">    - matchLabels:</span><br><span class="line">        rbac.authorization.k8s.io/aggregate-to-view: &quot;true&quot;</span><br><span class="line">rules: []</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: influx:telegraf:viewer</span><br><span class="line">  namespace: lily2</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: influx:telegraf</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: telegraf</span><br><span class="line">    namespace: lily2</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: telegraf</span><br><span class="line">  namespace: lily2</span><br></pre></td></tr></table></figure>
+
+<p>apply</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f .</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<h2 id="補充"><a href="#補充" class="headerlink" title="補充"></a>補充</h2><h3 id="參考資料"><a href="#參考資料" class="headerlink" title="參考資料"></a>參考資料</h3><p>k8s建立grafana<br><a target="_blank" rel="noopener" href="https://octoperf.com/blog/2019/09/19/kraken-kubernetes-influxdb-grafana-telegraf/#check-the-influxdb-deployment">https://octoperf.com/blog/2019/09/19/kraken-kubernetes-influxdb-grafana-telegraf/#check-the-influxdb-deployment</a><br>telegraf資料<br><a target="_blank" rel="noopener" href="https://www.ywdevops.cn/index.php/2022/06/10/telegraf-5/">https://www.ywdevops.cn/index.php/2022/06/10/telegraf-5/</a><br><a target="_blank" rel="noopener" href="https://godleon.github.io/blog/Kubernetes/k8s-How-to-access-resource-legally/">https://godleon.github.io/blog/Kubernetes/k8s-How-to-access-resource-legally/</a></p>
+<hr>
+<h3 id="influxdb操作"><a href="#influxdb操作" class="headerlink" title="influxdb操作"></a>influxdb操作</h3><p>influxdb驗證<br><a target="_blank" rel="noopener" href="https://docs.influxdata.com/influxdb/v1.7/administration/authentication_and_authorization/">https://docs.influxdata.com/influxdb/v1.7/administration/authentication_and_authorization/</a></p>
+<p>INFLUXDB 身分驗證<br>|&gt; influx<br>|&gt; auth<br>創建管理員用戶<br>|&gt; create user &lt;*admin*&gt; with password ‘&lt;*password*&gt;’ with all privileges<br>創建非管理員用戶<br>|&gt; create user &lt;*username*&gt; with password ‘&lt;*password*&gt;’</p>
+<hr>
+<h3 id="InitContainer"><a href="#InitContainer" class="headerlink" title="InitContainer"></a>InitContainer</h3><p>Grafana v9 使用pvc會有權限問題<br>錯誤訊息:<br>(1)GF_PATHS_DATA&#x3D;’&#x2F;var&#x2F;lib&#x2F;grafana’ is not writable.<br>(2)mkdir: can’t create directory ‘&#x2F;var&#x2F;lib&#x2F;grafana&#x2F;plugins’: Permission denied<br>原因: grafana預設讀取權限 grafana:root, 但掛載的方式會將檔案權限更改為 root:root, 因此須將掛載的權限改為grafana所需<br>結論: <del>使用initContainer可解決，參考: <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1856854">https://cloud.tencent.com/developer/article/1856854</a></del><br>加入這段可解決</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#調整權限</span><br><span class="line">securityContext:</span><br><span class="line">  runAsUser: 0</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+              <a href="/tags/gke/" rel="tag"># gke</a>
+              <a href="/tags/monitor/" rel="tag"># monitor</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/10/Github-Page/" rel="prev" title="Github_Page">
+                  <i class="fa fa-angle-left"></i> Github_Page
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Lily Lin</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
