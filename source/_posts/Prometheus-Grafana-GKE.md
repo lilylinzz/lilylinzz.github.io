@@ -13,7 +13,7 @@ tags:
 ## Prometheus 架構圖
 ![](https://i.imgur.com/ubC5Dxe.png)
 
-來源: [yasongxu|container-monitor](https://github.com/yasongxu/container-monitor/blob/master/opensource/agent/prometheus/Prometheus%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84.md
+來源: [yasongxu|container-monitor](https://github.com/yasongxu/container-monitor/blob/master/opensource/agent/prometheus/Prometheus%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84.md)
 
 ---
 ## 建置Prometheus
@@ -641,7 +641,7 @@ spec:
           value: lily
         # 更改UI路徑，預設為http://localhost:3000
         - name: GF_SERVER_ROOT_URL
-          value: http://34.80.42.154:3000
+          value: ip:3000
         ports:
         - name: grafana
           containerPort: 3000
@@ -770,7 +770,6 @@ data:
 
 #### 4.重新apply prometheus-externalvm.yaml 、prometheus.yaml
 從Prometheus UI確認狀態為up
-![image](https://hackmd.io/_uploads/HysgnKtYyg.png)
 
 
 

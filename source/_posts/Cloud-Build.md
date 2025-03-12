@@ -90,10 +90,10 @@ CMD ["/quickstart.sh"]
 steps:
 - name: 'gcr.io/cloud-builders/docker'
   script: |
-    docker build -t asia-east1-docker.pkg.dev/lab-0808/lily/quickstart-image:tag1 .
+    docker build -t asia-east1-docker.pkg.dev/project-id/lily/quickstart-image:tag1 .
   automapSubstitutions: true
 images:
-- 'asia-east1-docker.pkg.dev/lab-0808/lily/quickstart-image:tag1'
+- 'asia-east1-docker.pkg.dev/project-id/lily/quickstart-image:tag1'
 ```
 
 #### 開始創建 docker image
@@ -202,7 +202,7 @@ metadata:
   name: lily1
 description: development cluster
 gke:
-  cluster: projects/lab-0808/locations/asia-east1-a/clusters/lab-gke
+  cluster: projects/project-id/locations/asia-east1-a/clusters/lab-gke
 ```
 
 
@@ -210,21 +210,18 @@ gke:
 
 指令
 ```shell=
-gcloud deploy apply --file=clouddeploy.yaml --region=asia-east1 --project=lab-0808
+gcloud deploy apply --file=clouddeploy.yaml --region=asia-east1 --project=project-id
 ```
-成功訊息
-![09](../images/Cloud-Build/09.png)
-
 
 ### 建立版本
 
 指令
 ```
 gcloud deploy releases create release-lily1-2 \
-  --project=lab-0808 \
+  --project=project-id \
   --region=asia-east1 \
   --delivery-pipeline=lily-clouddeploy-test \
-  --images=my-app-image=gasia-east1-docker.pkg.dev/lab-0808/lily-test/quickstart-image:tag1
+  --images=my-app-image=gasia-east1-docker.pkg.dev/project-id/lily-test/quickstart-image:tag1
 ```
 
 
@@ -250,11 +247,11 @@ steps:
   args: [
     'build',
     '-t',
-    'asia-east1-docker.pkg.dev/lab-0808/lily-test/quickstart-image:$SHORT_SHA',
+    'asia-east1-docker.pkg.dev/project-id/lily-test/quickstart-image:$SHORT_SHA',
     '.',
   ]
 images:
-  - 'asia-east1-docker.pkg.dev/lab-0808/lily-test/quickstart-image:$SHORT_SHA'
+  - 'asia-east1-docker.pkg.dev/project-id/lily-test/quickstart-image:$SHORT_SHA'
 ```
 
 方法二、cloudbuild.yaml 使用環境變量 $BUILD_ID'
