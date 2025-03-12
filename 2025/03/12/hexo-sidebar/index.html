@@ -20,30 +20,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"lilylinzz.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="GitHub Pages 提供免費網站託管、版本控制及支援 Markdown 語法，是建立個人部落格的理想選擇。本文記錄使用 Hexo 框架建置部落格的過程，從環境建置、框架設定到主題安裝，最後部署至 GitHub Pages 的完整步驟。">
+    <meta name="description" content="Hexo_NexT 增加側欄功能">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Github_Page - 在 GitHub 建立個人部落格">
-<meta property="og:url" content="https://lilylinzz.github.io/2025/03/10/Github-Page/index.html">
+<meta property="og:title" content="hexo_sidebar">
+<meta property="og:url" content="https://lilylinzz.github.io/2025/03/12/hexo-sidebar/index.html">
 <meta property="og:site_name" content="Lily&#39;s blog">
-<meta property="og:description" content="GitHub Pages 提供免費網站託管、版本控制及支援 Markdown 語法，是建立個人部落格的理想選擇。本文記錄使用 Hexo 框架建置部落格的過程，從環境建置、框架設定到主題安裝，最後部署至 GitHub Pages 的完整步驟。">
+<meta property="og:description" content="Hexo_NexT 增加側欄功能">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:image" content="https://lilylinzz.github.io/images/Github-Page/Github-Page_01.png">
-<meta property="og:image" content="https://lilylinzz.github.io/images/Github-Page/Github-Page_02.png">
-<meta property="article:published_time" content="2025-03-10T07:20:55.000Z">
-<meta property="article:modified_time" content="2025-03-12T06:05:30.191Z">
+<meta property="article:published_time" content="2025-03-12T06:28:19.000Z">
+<meta property="article:modified_time" content="2025-03-12T06:39:16.938Z">
 <meta property="article:author" content="Lily Lin">
 <meta property="article:tag" content="hexo">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://lilylinzz.github.io/images/Github-Page/Github-Page_01.png">
 
 
-<link rel="canonical" href="https://lilylinzz.github.io/2025/03/10/Github-Page/">
+<link rel="canonical" href="https://lilylinzz.github.io/2025/03/12/hexo-sidebar/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://lilylinzz.github.io/2025/03/10/Github-Page/","path":"2025/03/10/Github-Page/","title":"Github_Page - 在 GitHub 建立個人部落格"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://lilylinzz.github.io/2025/03/12/hexo-sidebar/","path":"2025/03/12/hexo-sidebar/","title":"hexo_sidebar"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Github_Page - 在 GitHub 建立個人部落格 | Lily's blog</title>
+<title>hexo_sidebar | Lily's blog</title>
   
 
 
@@ -142,7 +139,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Step-1-%E5%BB%BA%E7%AB%8B%E6%96%B0%E5%84%B2%E5%AD%98%E5%BA%AB"><span class="nav-number">1.</span> <span class="nav-text">Step.1 建立新儲存庫</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Step-2-%E5%9C%A8%E6%9C%AC%E5%9C%B0%E7%AB%AF%E5%AE%89%E8%A3%9DHexo-wsl2"><span class="nav-number">2.</span> <span class="nav-text">Step.2 在本地端安裝Hexo (wsl2)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Step-3-%E4%BA%86%E8%A7%A3-Hexo-%E5%9F%BA%E6%9C%AC%E7%B5%90%E6%A7%8B-%E6%93%8D%E4%BD%9C%E6%8C%87%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">Step.3 了解 Hexo 基本結構 &amp; 操作指令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Step-4-%E9%83%A8%E7%BD%B2%E9%9D%9C%E6%85%8B%E9%A0%81%E9%9D%A2%E5%88%B0%E5%88%86%E6%94%AF"><span class="nav-number">4.</span> <span class="nav-text">Step.4 部署靜態頁面到分支</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%85%A5%E9%A0%AD%E5%83%8F"><span class="nav-number">1.</span> <span class="nav-text">加入頭像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%85%A5-social-link-Email-Linkedin"><span class="nav-number">2.</span> <span class="nav-text">加入 social link - Email &amp; Linkedin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%88%86%E9%A1%9E%E3%80%81%E6%A8%99%E7%B1%A4%E5%8A%9F%E8%83%BD"><span class="nav-number">3.</span> <span class="nav-text">添加分類、標籤功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%9C%E5%B0%8B%E5%8A%9F%E8%83%BD"><span class="nav-number">4.</span> <span class="nav-text">搜尋功能</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -206,7 +203,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://lilylinzz.github.io/2025/03/10/Github-Page/">
+    <link itemprop="mainEntityOfPage" href="https://lilylinzz.github.io/2025/03/12/hexo-sidebar/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -219,12 +216,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Github_Page - 在 GitHub 建立個人部落格 | Lily's blog">
-      <meta itemprop="description" content="GitHub Pages 提供免費網站託管、版本控制及支援 Markdown 語法，是建立個人部落格的理想選擇。本文記錄使用 Hexo 框架建置部落格的過程，從環境建置、框架設定到主題安裝，最後部署至 GitHub Pages 的完整步驟。">
+      <meta itemprop="name" content="hexo_sidebar | Lily's blog">
+      <meta itemprop="description" content="Hexo_NexT 增加側欄功能">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Github_Page - 在 GitHub 建立個人部落格
+          hexo_sidebar
         </h1>
 
         <div class="post-meta-container">
@@ -234,15 +231,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">發表於</span>
+      
 
-      <time title="創建時間：2025-03-10 15:20:55" itemprop="dateCreated datePublished" datetime="2025-03-10T15:20:55+08:00">2025-03-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2025-03-12 14:05:30" itemprop="dateModified" datetime="2025-03-12T14:05:30+08:00">2025-03-12</time>
+      <time title="創建時間：2025-03-12 14:28:19 / 修改時間：14:39:16" itemprop="dateCreated datePublished" datetime="2025-03-12T14:28:19+08:00">2025-03-12</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -257,67 +248,44 @@
   
 </div>
 
-            <div class="post-description">GitHub Pages 提供免費網站託管、版本控制及支援 Markdown 語法，是建立個人部落格的理想選擇。本文記錄使用 Hexo 框架建置部落格的過程，從環境建置、框架設定到主題安裝，最後部署至 GitHub Pages 的完整步驟。</div>
+            <div class="post-description">Hexo_NexT 增加側欄功能</div>
         </div>
       </header>
 
     
     
     
-    <div class="post-body" itemprop="articleBody"><h1 id="Step-1-建立新儲存庫"><a href="#Step-1-建立新儲存庫" class="headerlink" title="Step.1 建立新儲存庫"></a>Step.1 建立新儲存庫</h1><ul>
-<li>儲存庫名稱命名為 <code>username.github.io</code> username 需為 Github 使用者名稱，後續才可以直接用此名稱開啟頁面 (下圖示範因已建立過相同檔名所以有紅字，正常要是綠色勾勾)</li>
-<li>勾選 public 公開</li>
-</ul>
-<p><img src="/../images/Github-Page/Github-Page_01.png"></p>
-<hr>
-<h1 id="Step-2-在本地端安裝Hexo-wsl2"><a href="#Step-2-在本地端安裝Hexo-wsl2" class="headerlink" title="Step.2 在本地端安裝Hexo (wsl2)"></a>Step.2 在本地端安裝Hexo (wsl2)</h1><ul>
-<li><p>安裝 npm &lt;<a target="_blank" rel="noopener" href="https://github.com/nodejs-tw/nodejs-wiki-book/blob/master/zh-tw/node_npm.rst?source=post_page-----4d295ed96236---------------------------------------">NPM 套件管理工具</a>&gt;</p>
-  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt-get install python-software-properties</span><br><span class="line"><span class="built_in">sudo</span> add-apt-repository ppa:gias-kay-lee/npm</span><br><span class="line"><span class="built_in">sudo</span> apt-get update</span><br><span class="line"><span class="built_in">sudo</span> apt-get install npm</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安裝 hexo (在vscode操作會比較方便)</p>
-  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> npm install hexo-cli -g</span><br><span class="line">hexo init &lt;username&gt;.github.io <span class="comment">#跟剛剛建的倉庫同名字，會建出很多檔案</span></span><br><span class="line"><span class="built_in">cd</span> &lt;username&gt;.github.io</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>推上 github 倉庫</p>
-  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> &lt;username&gt;.github.io</span><br><span class="line">git init</span><br><span class="line">git add .</span><br><span class="line">git commit -m init</span><br><span class="line">git remote add origin git@github.com:&lt;your_repo&gt;/&lt;username&gt;.github.io.git</span><br><span class="line">git branch -M main</span><br><span class="line">git push -u origin main</span><br></pre></td></tr></table></figure></li>
-</ul>
-<hr>
-<h1 id="Step-3-了解-Hexo-基本結構-操作指令"><a href="#Step-3-了解-Hexo-基本結構-操作指令" class="headerlink" title="Step.3 了解 Hexo 基本結構 &amp; 操作指令"></a>Step.3 了解 Hexo 基本結構 &amp; 操作指令</h1><ul>
-<li><p>結構</p>
-<blockquote>
-<p>node_module -&gt; 這個專案所需要的Package (剛剛透過npm install所安裝)<br>  public -&gt; 存放網頁中的文章、圖片、標籤等資料。<br>  scaffolds -&gt; 存放網站的內容模板。<br>  themes -&gt; 存放網站的主題 (稍後介紹)<br>  _config.yml -&gt; 主要設定網站內容的檔案</p>
-</blockquote>
-</li>
-<li><p>操作</p>
-<blockquote>
-<p>hexo clean  -&gt; 將目前資料夾中的所有靜態網頁清除<br>  hexo generate  -&gt; 按照當前設定檔，產生對應靜態網頁<br>  hexo server  -&gt; 在本地端產生網頁 localhost:4000<br>  hexo deploy  -&gt; 部署到 GitHub</p>
-</blockquote>
-</li>
-</ul>
-<hr>
-<h1 id="Step-4-部署靜態頁面到分支"><a href="#Step-4-部署靜態頁面到分支" class="headerlink" title="Step.4 部署靜態頁面到分支"></a>Step.4 部署靜態頁面到分支</h1><ul>
-<li><p>修改 <code>_config.yml</code> 中的 deploy 內容 ( 這邊指定新的分支 gh-pages，待會deploy時會在遠端自動建立 )</p>
-  <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github.com:lilylinzz/lilylinzz.github.io.git</span></span><br><span class="line">  <span class="comment"># example, https://github.com/hexojs/hexojs.github.io</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">gh-pages</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>之後若有修改網頁內容，皆測試後部署到分支</p>
-  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo server     <span class="comment"># localhost:4000 本地測試，沒問題即可部署</span></span><br><span class="line">hexo deploy     <span class="comment">#只會將靜態網頁部署到分支</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>到 github_page 頁面選擇分支 → save</p>
-</li>
-</ul>
-<p><img src="/../images/Github-Page/Github-Page_02.png" alt="image"></p>
-<ul>
-<li><p>https:&#x2F;&#x2F;<username>.github.io 即可看到自己的網站</p>
-<hr>
-<p>  其他</p>
-<ul>
-<li><p>_config.yml 調整標題、描述、作者…等等</p>
-</li>
-<li><p>也可另外選主題更換 (各別主題有安裝教學)<br>  <a target="_blank" rel="noopener" href="https://hexo.io/themes/?source=post_page">https://hexo.io/themes/?source=post_page</a></p>
-</li>
-</ul>
-</li>
-</ul>
+    <div class="post-body" itemprop="articleBody"><h2 id="加入頭像"><a href="#加入頭像" class="headerlink" title="加入頭像"></a>加入頭像</h2><p><code>~/_config.next.yml</code> 調整設定檔中 avatar url</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Sidebar Avatar</span></span><br><span class="line">avatar:</span><br><span class="line">  url: /images/avatar.png</span><br><span class="line">  rounded: <span class="literal">true</span> <span class="comment">#改圓型</span></span><br><span class="line">  rotated: <span class="literal">false</span> <span class="comment">#旋轉</span></span><br></pre></td></tr></table></figure>
 
+<p>在 <code>hexo_root/source/images/avatar.png</code> 設置自己的圖片</p>
+<hr>
+<h2 id="加入-social-link-Email-Linkedin"><a href="#加入-social-link-Email-Linkedin" class="headerlink" title="加入 social link - Email &amp; Linkedin"></a>加入 social link - Email &amp; Linkedin</h2><p><code>~/_config.next.yml</code>  設定檔中，Github、Email移除註解，Linkedin要自己新增</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">social:</span><br><span class="line">  GitHub: https://lilylinzz.github.io/ || fab fa-github</span><br><span class="line">  E-Mail: mailto:lingaadin@gmail.com || fa fa-envelope</span><br><span class="line">  Linkedin: https://www.linkedin.com/in/lilylin-94a835229 || fab fa-linkedin-in</span><br></pre></td></tr></table></figure>
+
+<p>social_icons &gt; icons_only 改為true，只顯示icon</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">social_icons:</span><br><span class="line">  <span class="built_in">enable</span>: <span class="literal">true</span> <span class="comment">#預設</span></span><br><span class="line">  icons_only: <span class="literal">true</span></span><br><span class="line">  transition: <span class="literal">false</span> <span class="comment">#預設</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="添加分類、標籤功能"><a href="#添加分類、標籤功能" class="headerlink" title="添加分類、標籤功能"></a>添加分類、標籤功能</h2><p><code>~/_config.next.yml</code> 設定檔中找到 menu 的設置，取消註解 tag、categories<br>(如果要添加”about_me”頁面，也是相同作法)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">menu:</span><br><span class="line">  home: / || fa fa-home</span><br><span class="line">  #about: /about/ || fa fa-user</span><br><span class="line">  tags: /tags/ || fa fa-tags</span><br><span class="line">  categories: /categories/ || fa fa-th</span><br><span class="line">  archives: /archives/ || fa fa-archive</span><br><span class="line">  #schedule: /schedule/ || fa fa-calendar</span><br><span class="line">  #sitemap: /sitemap.xml || fa fa-sitemap</span><br><span class="line">  #commonweal: /404/ || fa fa-heartbeat</span><br></pre></td></tr></table></figure>
+<p>建立page，建立後會在 source 目錄下長出 tags、categories 資料夾，底下有 <a target="_blank" rel="noopener" href="http://index.md/">index.md</a> 檔案</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo new page <span class="string">&quot;tags&quot;</span></span><br><span class="line">hexo new page <span class="string">&quot;categories&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>編輯 <a target="_blank" rel="noopener" href="http://index.md/">index.md</a> 加入對應的 type</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: tags</span><br><span class="line"><span class="built_in">date</span>: 2025-03-10 17:53:58</span><br><span class="line"><span class="built_in">type</span>: tags</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">title: categories</span><br><span class="line"><span class="built_in">date</span>: 2025-03-12 13:51:42</span><br><span class="line"><span class="built_in">type</span>: categories</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+<p>後續在每篇文章頂部，輸入標籤及分類格式如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">title: </span><br><span class="line">date: </span><br><span class="line">tags: </span><br><span class="line">      - tagA</span><br><span class="line">      - tagB</span><br><span class="line">categories: </span><br><span class="line">- [AA分類, aa子分類]</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="搜尋功能"><a href="#搜尋功能" class="headerlink" title="搜尋功能"></a>搜尋功能</h2><p>跟目錄安裝</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-searchdb</span><br></pre></td></tr></table></figure>
+
+<p><code>~/_config.yml</code> Hexo設定檔加入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Search Service</span></span><br><span class="line">search:</span><br><span class="line">  path: search.xml</span><br><span class="line">  field: post</span><br><span class="line">  content: <span class="literal">true</span></span><br><span class="line">  format: html</span><br></pre></td></tr></table></figure>
+
+<p><code>~/_config.next.yml</code> NexT設定檔 local_search &gt; enable 改為 true</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">local_search:</span><br><span class="line">  enable: true</span><br><span class="line">  # Show top n results per article, show all results by setting to -1</span><br><span class="line">  top_n_per_article: 1</span><br><span class="line">  # Unescape html strings to the readable one.</span><br><span class="line">  unescape: false</span><br><span class="line">  # Preload the search data when the page loads.</span><br><span class="line">  preload: false</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -333,11 +301,11 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
+                <a href="/2025/03/12/hexo-decorate/" rel="prev" title="hexo-decorate">
+                  <i class="fa fa-angle-left"></i> hexo-decorate
+                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2025/03/10/Grafana-InfluxDB-Telegraf-GKE/" rel="next" title="Grafana/InfluxDB/Telegraf (GKE)">
-                  Grafana/InfluxDB/Telegraf (GKE) <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>
