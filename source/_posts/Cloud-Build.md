@@ -2,6 +2,8 @@
 title: Cloud Build
 date: 2025-03-11 11:04:32
 # description: 嘗試使用 Google Cloud Build 與 Cloud Deploy 自動化的程式碼建置及部署服務。
+categories: 
+  - [技術文件, CI/CD]
 tags: 
     - GCP
     - CI/CD

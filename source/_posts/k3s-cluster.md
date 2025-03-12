@@ -2,6 +2,8 @@
 title: k3s cluster
 date: 2025-03-11 14:01:06
 # description: 在 windows 本機也能玩 k8s - 透過 multipass 建立輕量化叢集 k3s。
+categories: 
+  - [技術文件, k8s]
 tags:
     - k3s
 ---

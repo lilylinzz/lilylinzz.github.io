@@ -105,3 +105,10 @@ deploy:
   repo: git@github.com:lilylinzz/lilylinzz.github.io.git
   # example, https://github.com/hexojs/hexojs.github.io
   branch: gh-pages
+
+# Search Service
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html

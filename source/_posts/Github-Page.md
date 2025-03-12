@@ -2,6 +2,7 @@
 title: Github_Page - 在 GitHub 建立個人部落格
 date: 2025-03-10 15:20:55
 description: GitHub Pages 提供免費網站託管、版本控制及支援 Markdown 語法，是建立個人部落格的理想選擇。本文記錄使用 Hexo 框架建置部落格的過程，從環境建置、框架設定到主題安裝，最後部署至 GitHub Pages 的完整步驟。
+categories: 個人網頁
 tags: hexo
 ---
 

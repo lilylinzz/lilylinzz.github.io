@@ -2,6 +2,8 @@
 title: Grafana/InfluxDB/Telegraf (GKE)
 date: 2025-03-10 17:14:40
 description: 本篇為使用 GKE 建置 Grafana、InfluxDb、Telegraf 監控工具，之操作步驟紀錄。
+categories: 
+  - [技術文件, k8s]
 tags: 
     - k8s
     - gke

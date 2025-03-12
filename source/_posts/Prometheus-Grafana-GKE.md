@@ -2,6 +2,8 @@
 title: Prometheus/Grafana (GKE)
 date: 2025-03-11 10:50:29
 description: 本篇為使用 GKE 建置 Prometheus、Grafana 監控工具，之操作步驟紀錄。
+categories: 
+  - [技術文件, k8s]
 tags:
     - k8s
     - gke
