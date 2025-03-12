@@ -1,7 +1,7 @@
 ---
 title: 更改cmd命令提示視窗背景
 date: 2025-03-12 15:46:58
-description: 讓 Terminal 視窗變好看，增加上班時的小確幸
+description: 讓 Terminal 視窗變好看，增加上班時的小確幸。
 categories: memo
 tags: terminal
 ---

@@ -1,7 +1,7 @@
 ---
-title: hexo_sidebar
+title: Hexo-NexT 增加側欄功能
 date: 2025-03-12 14:28:19
-description: Hexo_NexT 增加側欄功能
+description: 紀錄主題側邊欄的客製化配置，包含個人資訊展示、社群連結整合及文章分類標籤等功能實作。
 categories: 個人網頁
 tags: hexo
 ---

@@ -1,7 +1,7 @@
 ---
-title: hexo-decorate
+title: Hexo-Next 版面調整
 date: 2025-03-12 14:27:16
-description: Hexo_Next 一些版面美化
+description: 記錄 Hexo 部落格主題客製化與版面優化的調整過程。
 categories: 個人網頁
 tags: hexo
 ---
