@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lilylinzz.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="從安裝terraform，到透過terraform在GCP建立幾個功能，最最新手的練習過程紀錄。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Terraform 初學">
+<meta property="og:url" content="https://lilylinzz.github.io/2025/03/14/terraform-basic/index.html">
+<meta property="og:site_name" content="Lily&#39;s blog">
+<meta property="og:description" content="從安裝terraform，到透過terraform在GCP建立幾個功能，最最新手的練習過程紀錄。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-03-14T02:57:53.000Z">
+<meta property="article:modified_time" content="2025-03-14T07:45:18.660Z">
+<meta property="article:author" content="Lily Lin">
+<meta property="article:tag" content="terraform">
+<meta property="article:tag" content="gcp">
+<meta property="article:tag" content="IaC">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lilylinzz.github.io/2025/03/14/terraform-basic/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://lilylinzz.github.io/2025/03/14/terraform-basic/","path":"2025/03/14/terraform-basic/","title":"Terraform 初學"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Terraform 初學 | Lily's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Lily's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜尋..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E4%BD%9C%E6%A5%AD"><span class="nav-number">1.</span> <span class="nav-text">前置作業</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#linux-%E5%AE%89%E8%A3%9D-Terraform"><span class="nav-number">1.1.</span> <span class="nav-text">linux 安裝 Terraform</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B5%82%E7%AB%AF%E6%A9%9F%E7%99%BB%E5%85%A5GCP"><span class="nav-number">1.2.</span> <span class="nav-text">終端機登入GCP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Terraform-%E5%AF%A6%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">Terraform 實作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lab-1-%E5%BB%BA%E7%AB%8B-vpc-%E7%B6%B2%E8%B7%AF"><span class="nav-number">2.1.</span> <span class="nav-text">lab 1 - 建立 vpc 網路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lab-2-%E5%BB%BA%E7%AB%8Bvm-instance"><span class="nav-number">2.2.</span> <span class="nav-text">lab 2 - 建立vm instance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lab-3-%E9%85%8D%E7%BD%AE%E8%AE%8A%E6%95%B8"><span class="nav-number">2.3.</span> <span class="nav-text">lab 3 - 配置變數</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lily Lin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Lily Lin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://lilylinzz.github.io/" title="GitHub → https:&#x2F;&#x2F;lilylinzz.github.io&#x2F;" rel="noopener me"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:lingaadin@gmail.com" title="E-Mail → mailto:lingaadin@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/lilylin-94a835229" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;lilylin-94a835229" rel="noopener me" target="_blank"><i class="fab fa-linkedin-in fa-fw"></i></a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://lilylinzz.github.io/2025/03/14/terraform-basic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Lily Lin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lily's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Terraform 初學 | Lily's blog">
+      <meta itemprop="description" content="從安裝terraform，到透過terraform在GCP建立幾個功能，最最新手的練習過程紀錄。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Terraform 初學
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2025-03-14 10:57:53 / 修改時間：15:45:18" itemprop="dateCreated datePublished" datetime="2025-03-14T10:57:53+08:00">2025-03-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">技術文件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/terraform/" itemprop="url" rel="index"><span itemprop="name">terraform</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">從安裝terraform，到透過terraform在GCP建立幾個功能，最最新手的練習過程紀錄。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="前置作業"><a href="#前置作業" class="headerlink" title="前置作業"></a>前置作業</h2><h3 id="linux-安裝-Terraform"><a href="#linux-安裝-Terraform" class="headerlink" title="linux 安裝 Terraform"></a>linux 安裝 Terraform</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget https://releases.hashicorp.com/terraform/0.14.8/terraform_0.14.8_linux_amd64.zip</span><br><span class="line">sudo apt install unzip</span><br><span class="line">sudo unzip terraform_0.14.8_linux_amd64.zip -d /usr/local/bin</span><br><span class="line">terraform --version</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Terraform版本0.14.8 &#x2F; google provider版本6.9.0</li>
+<li><a target="_blank" rel="noopener" href="https://developer.hashicorp.com/terraform/tutorials/gcp-get-started/install-cli">Terraform官網</a> 說明很詳細</li>
+</ul>
+<hr>
+<p>可以加入別名(Alias)，之後操作比較方便<br>1.打開終端機的 .basrc 檔案 <code>vim ~/.basrc</code><br>2.在文件最下方加入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias tf=&quot;terraform&quot;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="終端機登入GCP"><a href="#終端機登入GCP" class="headerlink" title="終端機登入GCP"></a>終端機登入GCP</h3><p><a target="_blank" rel="noopener" href="https://cloud.google.com/sdk/docs/install">官網</a> 照做就好</p>
+<p>裝好後登入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcloud auth login</span><br><span class="line">gcloud config set project PROJECT_ID</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Terraform-實作"><a href="#Terraform-實作" class="headerlink" title="Terraform 實作"></a>Terraform 實作</h2><h3 id="lab-1-建立-vpc-網路"><a href="#lab-1-建立-vpc-網路" class="headerlink" title="lab 1 - 建立 vpc 網路"></a>lab 1 - 建立 vpc 網路</h3><p>1.找個適當的目錄底下，建立 <code>main.tf</code>，內容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">terraform &#123;</span><br><span class="line">  required_providers &#123;</span><br><span class="line">    google = &#123;</span><br><span class="line">      source  = &quot;hashicorp/google&quot;</span><br><span class="line">      version = &quot;4.83.0&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">provider &quot;google&quot; &#123;</span><br><span class="line">  credentials = file(&quot;lab-terraform-key.json&quot;)</span><br><span class="line"></span><br><span class="line">  project = &quot;project-id&quot;</span><br><span class="line">  region  = &quot;asia-east1&quot;</span><br><span class="line">  zone    = &quot;asia-east1-c&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource &quot;google_compute_network&quot; &quot;vpc_network&quot; &#123;</span><br><span class="line">  name = &quot;terraform-network&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>credentials &#x3D; GCP服務帳務金鑰(在下一步說明)<br>peoject &#x3D; GCP的專案ID</p>
+</blockquote>
+<hr>
+<p>2.建立服務帳戶金鑰</p>
+<ul>
+<li>GCP服務帳戶 &gt; 建立服務帳戶 &gt; 存下金鑰</li>
+<li>IAM 替服務帳戶設定適當的權限</li>
+<li>terraform 根目錄下建立檔案，輸入以下  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">    &#123;</span><br><span class="line">  &quot;type&quot;: &quot;service_account&quot;,</span><br><span class="line">  &quot;project_id&quot;: &quot;&quot;,             ## 專案id</span><br><span class="line">  &quot;private_key_id&quot;: &quot;&quot;,         ## 金鑰id</span><br><span class="line">  &quot;private_key&quot;: &quot;&quot;,            ## 剛剛存下的金鑰內容</span><br><span class="line">  &quot;client_email&quot;: &quot;&quot;,           ## service accound</span><br><span class="line">  &quot;client_id&quot;: &quot;&quot;,              ## 服務帳戶的id</span><br><span class="line">  &quot;auth_uri&quot;: &quot;https://accounts.google.com/o/oauth2/auth&quot;,</span><br><span class="line">  &quot;token_uri&quot;: &quot;https://oauth2.googleapis.com/token&quot;,</span><br><span class="line">  &quot;auth_provider_x509_cert_url&quot;: &quot;https://www.googleapis.com/oauth2/v1/certs&quot;,</span><br><span class="line">  &quot;client_x509_cert_url&quot;: &quot;https://www.googleapis.com/robot/v1/metadata/x509/terraform%40lab-0808.iam.gserviceaccount.com&quot;,</span><br><span class="line">  &quot;universe_domain&quot;: &quot;googleapis.com&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<p>3.初始化 - 當有新的配置，需此步驟下載配置中定義的provider</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">terraform init</span><br></pre></td></tr></table></figure>
+
+<p>4.使用fmt格式化代碼，確保代碼風格一致且易讀 &#x2F; 使用validate驗證代碼有效</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">terraform fmt</span><br><span class="line">terraform validate</span><br></pre></td></tr></table></figure>
+
+<p>5.預覽 - 可預覽將要異動的資源，不會執行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">terraform plan</span><br></pre></td></tr></table></figure>
+
+<p>6.建立 - 預覽確認沒有問題，輸入yes則執行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">terraform apply</span><br></pre></td></tr></table></figure>
+<hr>
+<p>3-6步驟，因前面有加入別名，在輸入時都可將 terraform 簡化為 tf</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tf init</span><br><span class="line">tf fmt</span><br><span class="line">tf validate</span><br><span class="line">tf plan</span><br><span class="line">tf apply</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>註: plan 與 apply 時，終端都會秀出異動的項目，前綴標籤分別有不同意思</p>
+<blockquote>
+<p>“+” create 建立新項目<br>  “~” update in-place 不停機更新<br> “-&#x2F;+” destroy and then create replacement 將銷毀並重新建立資源</p>
+</blockquote>
+<hr>
+<h3 id="lab-2-建立vm-instance"><a href="#lab-2-建立vm-instance" class="headerlink" title="lab 2 - 建立vm instance"></a>lab 2 - 建立vm instance</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">terraform &#123;</span><br><span class="line">  required_providers &#123;</span><br><span class="line">    google = &#123;</span><br><span class="line">      source  = &quot;hashicorp/google&quot;</span><br><span class="line">      version = &quot;4.83.0&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">provider &quot;google&quot; &#123;</span><br><span class="line">  credentials = file(&quot;lab-terraform-key.json&quot;)</span><br><span class="line"></span><br><span class="line">  project = &quot;lab-0808&quot;</span><br><span class="line">  region  = &quot;asia-east1&quot;</span><br><span class="line">  zone    = &quot;asia-east1-c&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource &quot;google_compute_instance&quot; &quot;vm_instance&quot; &#123;</span><br><span class="line">  name         = &quot;terraform-lilytest&quot;</span><br><span class="line">  machine_type = &quot;n1-standard-1&quot;</span><br><span class="line">  zone         = &quot;asia-east1-c&quot;</span><br><span class="line"></span><br><span class="line">  boot_disk &#123;</span><br><span class="line">    initialize_params &#123;</span><br><span class="line">      image = &quot;projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240229&quot;</span><br><span class="line">      size = &quot;10&quot;</span><br><span class="line">      type = &quot;projects/lab-0808/zones/asia-east1-c/diskTypes/pd-standard&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  network_interface &#123;</span><br><span class="line">    network = &quot;default&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="lab-3-配置變數"><a href="#lab-3-配置變數" class="headerlink" title="lab 3 - 配置變數"></a>lab 3 - 配置變數</h3><p>可以從前面的 lab 1或2延伸繼續，根目錄新增檔案 <code>variables.tf</code>  設定變數</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">variable &quot;project&quot; &#123; &#125;</span><br><span class="line"></span><br><span class="line">variable &quot;credentials_file&quot; &#123; &#125;</span><br><span class="line"></span><br><span class="line">variable &quot;region&quot; &#123;</span><br><span class="line">  default = &quot;asia-east1&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;zone&quot; &#123;</span><br><span class="line">  default = &quot;asia-east1-c&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>編輯 <code>main.tf</code> 將 project、credentials_fail、region、zone 改為變數</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">terraform &#123;</span><br><span class="line">  required_providers &#123;</span><br><span class="line">    google = &#123;</span><br><span class="line">      source  = &quot;hashicorp/google&quot;</span><br><span class="line">      version = &quot;4.83.0&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">provider &quot;google&quot; &#123;</span><br><span class="line">  credentials = file(var.credentials_file)</span><br><span class="line"></span><br><span class="line">  project = var.project</span><br><span class="line">  region  = var.region</span><br><span class="line">  zone    = var.zone</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/terraform/" rel="tag"># terraform</a>
+              <a href="/tags/gcp/" rel="tag"># gcp</a>
+              <a href="/tags/IaC/" rel="tag"># IaC</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/12/windows-terminal/" rel="prev" title="更改cmd命令提示視窗背景">
+                  <i class="fa fa-angle-left"></i> 更改cmd命令提示視窗背景
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/03/14/terraform-variables/" rel="next" title="Terraform 變數概念">
+                  Terraform 變數概念 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa-regular fa-star"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Lily Lin</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lilylinzz.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Terraform 使用自建 Module 建立 GKE 叢集，用以了解 Module 概念。之實作紀錄。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Terraform module 練習">
+<meta property="og:url" content="https://lilylinzz.github.io/2025/03/14/terraform-module/index.html">
+<meta property="og:site_name" content="Lily&#39;s blog">
+<meta property="og:description" content="Terraform 使用自建 Module 建立 GKE 叢集，用以了解 Module 概念。之實作紀錄。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-03-14T06:59:06.000Z">
+<meta property="article:modified_time" content="2025-03-14T07:26:07.842Z">
+<meta property="article:author" content="Lily Lin">
+<meta property="article:tag" content="terraform">
+<meta property="article:tag" content="gcp">
+<meta property="article:tag" content="IaC">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lilylinzz.github.io/2025/03/14/terraform-module/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://lilylinzz.github.io/2025/03/14/terraform-module/","path":"2025/03/14/terraform-module/","title":"Terraform module 練習"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Terraform module 練習 | Lily's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Lily's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜尋..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E7%B5%84%E7%9B%AE%E9%8C%84%E7%B5%90%E6%A7%8B"><span class="nav-number">1.</span> <span class="nav-text">模組目錄結構</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#modules-%E7%B7%A8%E5%AF%AB"><span class="nav-number">2.</span> <span class="nav-text">modules 編寫</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E9%85%8D%E7%BD%AE%E7%B7%A8%E5%AF%AB"><span class="nav-number">2.1.</span> <span class="nav-text">主配置編寫</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lily Lin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Lily Lin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://lilylinzz.github.io/" title="GitHub → https:&#x2F;&#x2F;lilylinzz.github.io&#x2F;" rel="noopener me"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:lingaadin@gmail.com" title="E-Mail → mailto:lingaadin@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/lilylin-94a835229" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;lilylin-94a835229" rel="noopener me" target="_blank"><i class="fab fa-linkedin-in fa-fw"></i></a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://lilylinzz.github.io/2025/03/14/terraform-module/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Lily Lin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lily's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Terraform module 練習 | Lily's blog">
+      <meta itemprop="description" content="Terraform 使用自建 Module 建立 GKE 叢集，用以了解 Module 概念。之實作紀錄。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Terraform module 練習
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2025-03-14 14:59:06 / 修改時間：15:26:07" itemprop="dateCreated datePublished" datetime="2025-03-14T14:59:06+08:00">2025-03-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">技術文件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/terraform/" itemprop="url" rel="index"><span itemprop="name">terraform</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">Terraform 使用自建 Module 建立 GKE 叢集，用以了解 Module 概念。之實作紀錄。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="模組目錄結構"><a href="#模組目錄結構" class="headerlink" title="模組目錄結構"></a>模組目錄結構</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">project-root/</span><br><span class="line">├── main.tf           # 主要的模組調用文件</span><br><span class="line">├── variables.tf      # （可選）根層級的變數定義</span><br><span class="line">├── outputs.tf        # （可選）根層級的輸出定義</span><br><span class="line">├── provider.tf       # provider 配置</span><br><span class="line">├── terraform.tfvars  # （可選）變數值配置文件</span><br><span class="line">└── modules/</span><br><span class="line">    └── gke/</span><br><span class="line">        ├── main.tf       # GKE 模組的主要資源定義</span><br><span class="line">        ├── variables.tf  # GKE 模組的變數定義</span><br><span class="line">        ├── outputs.tf    # GKE 模組的輸出定義</span><br><span class="line">        └── versions.tf   # （可選）模組的版本要求</span><br></pre></td></tr></table></figure>
+
+<h2 id="modules-編寫"><a href="#modules-編寫" class="headerlink" title="modules 編寫"></a>modules 編寫</h2><p>1.首先在根目錄創建資料夾 “modules&#x2F;gke”</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">## 先建立這個部分</span><br><span class="line">modules/</span><br><span class="line">    └── gke/ </span><br><span class="line">        ├── main.tf       # GKE 模組的主要資源定義</span><br><span class="line">        ├── variables.tf  # GKE 模組的變數定義</span><br><span class="line">        └── outputs.tf    # GKE 模組的輸出定義</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>2.<code>modules/gke/</code>底下建立檔案 <code>main.tf</code>，寫我們的gke配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"># 獲取目前專案配置</span><br><span class="line">data &quot;google_client_config&quot; &quot;default&quot; &#123;&#125;</span><br><span class="line"></span><br><span class="line"># 創建 GKE 叢集</span><br><span class="line">resource &quot;google_container_cluster&quot; &quot;cluster&quot; &#123;</span><br><span class="line">  name     = var.cluster_name</span><br><span class="line">  location = var.zone</span><br><span class="line"></span><br><span class="line">  # 我們需要先創建一個默認節點池，之後會移除它</span><br><span class="line">  remove_default_node_pool = true</span><br><span class="line">  initial_node_count       = 1</span><br><span class="line"></span><br><span class="line">  # 網路配置</span><br><span class="line">  network    = var.network</span><br><span class="line">  subnetwork = var.subnetwork</span><br><span class="line"></span><br><span class="line">  # 叢集配置</span><br><span class="line">  release_channel &#123;</span><br><span class="line">    channel = var.release_channel</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  # 啟用工作負載身份</span><br><span class="line">  workload_identity_config &#123;</span><br><span class="line">    workload_pool = &quot;$&#123;var.project&#125;.svc.id.goog&quot;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  # 啟用其他功能</span><br><span class="line">  addons_config &#123;</span><br><span class="line">    http_load_balancing &#123;</span><br><span class="line">      disabled = false</span><br><span class="line">    &#125;</span><br><span class="line">    horizontal_pod_autoscaling &#123;</span><br><span class="line">      disabled = false</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#  創建節點池</span><br><span class="line">resource &quot;google_container_node_pool&quot; &quot;nodes&quot; &#123;</span><br><span class="line">  name     = var.node_pool_name</span><br><span class="line">  location = var.zone</span><br><span class="line">  cluster  = google_container_cluster.cluster.name</span><br><span class="line"></span><br><span class="line">  # 節點數量配置</span><br><span class="line">  initial_node_count = var.initial_node_count</span><br><span class="line"></span><br><span class="line">  # 自動擴縮配置</span><br><span class="line">  autoscaling &#123;</span><br><span class="line">    min_node_count = var.min_node_count</span><br><span class="line">    max_node_count = var.max_node_count</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  # 節點配置</span><br><span class="line">  node_config &#123;</span><br><span class="line">    machine_type = var.machine_type</span><br><span class="line">    labels       = var.node_labels</span><br><span class="line"></span><br><span class="line">    # OAuth 範圍</span><br><span class="line">    oauth_scopes = var.oauth_scopes</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  # 管理配置</span><br><span class="line">  management &#123;</span><br><span class="line">    auto_repair  = true</span><br><span class="line">    auto_upgrade = true</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>3.<code>modules/gke/</code> 底下建立檔案 &#96;variables.tf，寫變數配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line">variable &quot;project&quot; &#123;</span><br><span class="line">  description = &quot;GCP Project ID&quot;</span><br><span class="line">  type        = string</span><br><span class="line">  default     = &quot;project-id&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;region&quot; &#123;</span><br><span class="line">  type    = string</span><br><span class="line">  default = &quot;asia-east1&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;zone&quot; &#123;</span><br><span class="line">  type    = string</span><br><span class="line">  default = &quot;asia-east1-c&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;cluster_name&quot; &#123;</span><br><span class="line">  type    = string</span><br><span class="line">  default = &quot;lily-tf-cluster&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;network&quot; &#123;</span><br><span class="line">  description = &quot;VPC 網路名稱&quot;</span><br><span class="line">  type        = string</span><br><span class="line">  default     = &quot;default&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;subnetwork&quot; &#123;</span><br><span class="line">  description = &quot;子網路名稱&quot;</span><br><span class="line">  type        = string</span><br><span class="line">  default     = &quot;default&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;release_channel&quot; &#123;</span><br><span class="line">  description = &quot;GKE 版本發布頻道&quot;</span><br><span class="line">  type        = string</span><br><span class="line">  default     = &quot;REGULAR&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;node_pool_name&quot; &#123;</span><br><span class="line">  description = &quot;節點池名稱&quot;</span><br><span class="line">  type        = string</span><br><span class="line">  default     = &quot;primary-node-pool&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;initial_node_count&quot; &#123;</span><br><span class="line">  description = &quot;初始節點數量&quot;</span><br><span class="line">  type        = number</span><br><span class="line">  default     = 1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;min_node_count&quot; &#123;</span><br><span class="line">  description = &quot;最小節點數量&quot;</span><br><span class="line">  type        = number</span><br><span class="line">  default     = 1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;max_node_count&quot; &#123;</span><br><span class="line">  description = &quot;最大節點數量&quot;</span><br><span class="line">  type        = number</span><br><span class="line">  default     = 1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;machine_type&quot; &#123;</span><br><span class="line">  description = &quot;節點機器類型&quot;</span><br><span class="line">  type        = string</span><br><span class="line">  default     = &quot;e2-micro&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;node_labels&quot; &#123;</span><br><span class="line">  description = &quot;節點標籤&quot;</span><br><span class="line">  type        = map(string)</span><br><span class="line">  default     = &#123;</span><br><span class="line">    env = &quot;development&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">variable &quot;oauth_scopes&quot; &#123;</span><br><span class="line">  description = &quot;節點 OAuth 範圍&quot;</span><br><span class="line">  type        = list(string)</span><br><span class="line">  default     = [</span><br><span class="line">    &quot;https://www.googleapis.com/auth/logging.write&quot;,</span><br><span class="line">    &quot;https://www.googleapis.com/auth/monitoring&quot;,</span><br><span class="line">    &quot;https://www.googleapis.com/auth/devstorage.read_only&quot;,</span><br><span class="line">    &quot;https://www.googleapis.com/auth/service.management.readonly&quot;,</span><br><span class="line">    &quot;https://www.googleapis.com/auth/servicecontrol&quot;,</span><br><span class="line">    &quot;https://www.googleapis.com/auth/trace.append&quot;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>4.<code>modules/gke/</code>底下建立檔案 <code>output.tf</code>，寫 output 配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">output &quot;cluster_name&quot; &#123;</span><br><span class="line">  value       = google_container_cluster.cluster.name</span><br><span class="line">  description = &quot;GKE 叢集名稱&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">output &quot;cluster_endpoint&quot; &#123;</span><br><span class="line">  value       = google_container_cluster.cluster.endpoint</span><br><span class="line">  description = &quot;GKE 叢集端點&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">output &quot;cluster_ca_certificate&quot; &#123;</span><br><span class="line">  value       = base64decode(google_container_cluster.cluster.master_auth[0].cluster_ca_certificate)</span><br><span class="line">  sensitive   = true</span><br><span class="line">  description = &quot;GKE 叢集 CA 證書&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<hr>
+<h3 id="主配置編寫"><a href="#主配置編寫" class="headerlink" title="主配置編寫"></a>主配置編寫</h3><p>1.根目錄創建 <code>main.tf</code>，引用 gke 模組</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">module &quot;gke&quot; &#123;</span><br><span class="line">  source = &quot;./modules/gke&quot;</span><br><span class="line"></span><br><span class="line">  project   = &quot;project-id&quot;</span><br><span class="line">  cluster_name = &quot;cluster-name&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>註: 變數傳遞流程如下</p>
+<blockquote>
+<p>根目錄 <a target="_blank" rel="noopener" href="http://variables.tf/">variables.tf</a><br>↓<br>根目錄 <a target="_blank" rel="noopener" href="http://main.tf/">main.tf</a><br>↓<br>模組內 <a target="_blank" rel="noopener" href="http://variables.tf/">variables.tf</a><br>↓<br>模組內 <a target="_blank" rel="noopener" href="http://main.tf/">main.tf</a></p>
+</blockquote>
+<hr>
+<p>2.根目錄創建 <code>provider.tf</code> ，需要添加 kubernetes provider</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"># CONFIGURATION</span><br><span class="line"># ------------------------------</span><br><span class="line">terraform &#123;</span><br><span class="line">  required_providers &#123;</span><br><span class="line">    google = &#123;</span><br><span class="line">      source  = &quot;hashicorp/google&quot;</span><br><span class="line">      version = &quot;4.83.0&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># PROVIDERS</span><br><span class="line"># ------------------------------</span><br><span class="line">provider &quot;google&quot; &#123;</span><br><span class="line">  credentials = file(var.credentials_file)</span><br><span class="line">  project     = var.project</span><br><span class="line">  region      = var.region</span><br><span class="line">  zone        = var.zone</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">provider &quot;kubernetes&quot; &#123;</span><br><span class="line">  host                   = &quot;https://$&#123;module.gke.cluster_endpoint&#125;&quot;     # GKE 叢集的 API Server 端點</span><br><span class="line">  cluster_ca_certificate = base64decode(module.gke.cluster_ca_certificate)     # GKE 叢集的 CA 憑證，用於驗證 API Server</span><br><span class="line">  token                  = data.google_client_config.default.access_token     # 用於認證的 access token</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/terraform/" rel="tag"># terraform</a>
+              <a href="/tags/gcp/" rel="tag"># gcp</a>
+              <a href="/tags/IaC/" rel="tag"># IaC</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/14/terraform-variables/" rel="prev" title="Terraform 變數概念">
+                  <i class="fa fa-angle-left"></i> Terraform 變數概念
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/03/14/terraform-for-each/" rel="next" title="Terraform for_each 練習">
+                  Terraform for_each 練習 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa-regular fa-star"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Lily Lin</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

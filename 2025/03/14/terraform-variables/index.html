@@ -20,31 +20,29 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"lilylinzz.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="讓 Terminal 視窗變好看，增加上班時的小確幸。">
+    <meta name="description" content="變數使用優先權1.命令列參數 (最優先) : 使用 terraform apply -var&#x3D;”” 帶的變數2.Terraform 環境變數 : 使用 TV_VAR_foo 環境變數定義的變數3.Terraform 變數文件 : 使用 terraform.tvfars 文件定義變數4.Terraform 設定文件 : 使用 variables 區塊定義變數5.變數預設值">
 <meta property="og:type" content="article">
-<meta property="og:title" content="更改cmd命令提示視窗背景">
-<meta property="og:url" content="https://lilylinzz.github.io/2025/03/12/windows-terminal/index.html">
+<meta property="og:title" content="Terraform 變數概念">
+<meta property="og:url" content="https://lilylinzz.github.io/2025/03/14/terraform-variables/index.html">
 <meta property="og:site_name" content="Lily&#39;s blog">
-<meta property="og:description" content="讓 Terminal 視窗變好看，增加上班時的小確幸。">
+<meta property="og:description" content="變數使用優先權1.命令列參數 (最優先) : 使用 terraform apply -var&#x3D;”” 帶的變數2.Terraform 環境變數 : 使用 TV_VAR_foo 環境變數定義的變數3.Terraform 變數文件 : 使用 terraform.tvfars 文件定義變數4.Terraform 設定文件 : 使用 variables 區塊定義變數5.變數預設值">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:image" content="https://lilylinzz.github.io/images/windows-terminal/01.png">
-<meta property="og:image" content="https://lilylinzz.github.io/images/windows-terminal/02.png">
-<meta property="og:image" content="https://lilylinzz.github.io/images/windows-terminal/03.png">
-<meta property="article:published_time" content="2025-03-12T07:46:58.000Z">
-<meta property="article:modified_time" content="2025-03-12T10:12:50.369Z">
+<meta property="article:published_time" content="2025-03-14T06:41:07.000Z">
+<meta property="article:modified_time" content="2025-03-14T07:40:16.371Z">
 <meta property="article:author" content="Lily Lin">
-<meta property="article:tag" content="terminal">
+<meta property="article:tag" content="terraform">
+<meta property="article:tag" content="gcp">
+<meta property="article:tag" content="IaC">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://lilylinzz.github.io/images/windows-terminal/01.png">
 
 
-<link rel="canonical" href="https://lilylinzz.github.io/2025/03/12/windows-terminal/">
+<link rel="canonical" href="https://lilylinzz.github.io/2025/03/14/terraform-variables/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://lilylinzz.github.io/2025/03/12/windows-terminal/","path":"2025/03/12/windows-terminal/","title":"更改cmd命令提示視窗背景"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://lilylinzz.github.io/2025/03/14/terraform-variables/","path":"2025/03/14/terraform-variables/","title":"Terraform 變數概念"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>更改cmd命令提示視窗背景 | Lily's blog</title>
+<title>Terraform 變數概念 | Lily's blog</title>
   
 
 
@@ -143,7 +141,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-Windows-Terminal"><span class="nav-number">1.</span> <span class="nav-text">安裝 Windows Terminal</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E9%A0%90%E8%A8%AD%E5%95%9F%E5%8B%95"><span class="nav-number">2.</span> <span class="nav-text">更改預設啟動</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E8%83%8C%E6%99%AF"><span class="nav-number">3.</span> <span class="nav-text">改背景</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%8A%E6%95%B8%E4%BD%BF%E7%94%A8%E5%84%AA%E5%85%88%E6%AC%8A"><span class="nav-number">1.</span> <span class="nav-text">變數使用優先權</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%8A%E6%95%B8%E7%A8%AE%E9%A1%9E"><span class="nav-number"></span> <span class="nav-text">變數種類</span></a></div>
         </div>
         <!--/noindex-->
 
@@ -207,7 +205,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://lilylinzz.github.io/2025/03/12/windows-terminal/">
+    <link itemprop="mainEntityOfPage" href="https://lilylinzz.github.io/2025/03/14/terraform-variables/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -220,12 +218,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="更改cmd命令提示視窗背景 | Lily's blog">
-      <meta itemprop="description" content="讓 Terminal 視窗變好看，增加上班時的小確幸。">
+      <meta itemprop="name" content="Terraform 變數概念 | Lily's blog">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          更改cmd命令提示視窗背景
+          Terraform 變數概念
         </h1>
 
         <div class="post-meta-container">
@@ -237,7 +235,7 @@
       <span class="post-meta-item-text">發表於</span>
       
 
-      <time title="創建時間：2025-03-12 15:46:58 / 修改時間：18:12:50" itemprop="dateCreated datePublished" datetime="2025-03-12T15:46:58+08:00">2025-03-12</time>
+      <time title="創建時間：2025-03-14 14:41:07 / 修改時間：15:40:16" itemprop="dateCreated datePublished" datetime="2025-03-14T14:41:07+08:00">2025-03-14</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -245,28 +243,31 @@
       </span>
       <span class="post-meta-item-text">分類於</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/memo/" itemprop="url" rel="index"><span itemprop="name">memo</span></a>
+          <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">技術文件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/terraform/" itemprop="url" rel="index"><span itemprop="name">terraform</span></a>
         </span>
     </span>
 
   
 </div>
 
-            <div class="post-description">讓 Terminal 視窗變好看，增加上班時的小確幸。</div>
         </div>
       </header>
 
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="安裝-Windows-Terminal"><a href="#安裝-Windows-Terminal" class="headerlink" title="安裝 Windows Terminal"></a>安裝 Windows Terminal</h2><p>在 Microsoft Store 搜尋 Windows Terminal 下載安裝</p>
+    <div class="post-body" itemprop="articleBody"><h3 id="變數使用優先權"><a href="#變數使用優先權" class="headerlink" title="變數使用優先權"></a>變數使用優先權</h3><p>1.命令列參數 (最優先) : 使用 terraform apply -var&#x3D;”” 帶的變數<br>2.Terraform 環境變數 : 使用 TV_VAR_foo 環境變數定義的變數<br>3.Terraform 變數文件 : 使用 terraform.tvfars 文件定義變數<br>4.Terraform 設定文件 : 使用 variables 區塊定義變數<br>5.變數預設值</p>
+<span id="more"></span>
 <hr>
-<h2 id="更改預設啟動"><a href="#更改預設啟動" class="headerlink" title="更改預設啟動"></a>更改預設啟動</h2><p>開啟 Windows Terminal，下拉選單 &gt; 設定<br>預設啟動 &gt; 調整自己最常用的設定檔<br>預設終端應用程式 &gt; 調整為 Windows 終端機<br><img src="/../images/windows-terminal/01.png" alt="01"></p>
-<hr>
-<h2 id="改背景"><a href="#改背景" class="headerlink" title="改背景"></a>改背景</h2><p>左下角開啟 setting.json<br><img src="/../images/windows-terminal/02.png" alt="02"></p>
-<p>profiles &gt; defaults 加入背景圖片與透明度設定</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;backgroundImage&quot;: &quot;D:\\terminal_background\\chiikawa.jpg&quot;,</span><br><span class="line">&quot;backgroundImageOpacity&quot;: 0.11,</span><br></pre></td></tr></table></figure>
-<p><img src="/../images/windows-terminal/03.png" alt="03"></p>
+<h2 id="變數種類"><a href="#變數種類" class="headerlink" title="變數種類"></a>變數種類</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"># 字串變數（String variables）：用於定義字符串值</span><br><span class="line">variable &quot;region&quot; &#123;</span><br><span class="line">  type    = string</span><br><span class="line">  default = &quot;asia-east1-c&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 數字變數（Number variables）：用於定義數字值</span><br><span class="line">variable &quot;instance_count&quot; &#123;</span><br><span class="line">  type    = number</span><br><span class="line">  default = 123</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 布林變數（Boolean variables）：用於定義布林值（True 或 False）</span><br><span class="line">variable &quot;use_ssl&quot; &#123;</span><br><span class="line">  type    = bool</span><br><span class="line">  default = true</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 列表變數（List variables）：用於定義多個值</span><br><span class="line">variable &quot;tags&quot; &#123;</span><br><span class="line">  type    = list(string)</span><br><span class="line">  default = [&quot;qc&quot;, &quot;rtm&quot;, &quot;online&quot;]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 映射變數（Map variables）：用於定義鍵值對（Key-Value Pairs）</span><br><span class="line">variable &quot;region_zone_map&quot; &#123;</span><br><span class="line">  type = map(string)</span><br><span class="line">  default = &#123;</span><br><span class="line">    area1 = &quot;asia-east1-a&quot;</span><br><span class="line">    area2 = &quot;asia-east1-b&quot;</span><br><span class="line">    area3 = &quot;asia-east1-c&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
 
     </div>
 
@@ -276,20 +277,22 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/terminal/" rel="tag"># terminal</a>
+              <a href="/tags/terraform/" rel="tag"># terraform</a>
+              <a href="/tags/gcp/" rel="tag"># gcp</a>
+              <a href="/tags/IaC/" rel="tag"># IaC</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2025/03/12/hexo-sidebar/" rel="prev" title="Hexo-NexT 增加側欄功能">
-                  <i class="fa fa-angle-left"></i> Hexo-NexT 增加側欄功能
+                <a href="/2025/03/14/terraform-basic/" rel="prev" title="Terraform 初學">
+                  <i class="fa fa-angle-left"></i> Terraform 初學
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2025/03/14/terraform-basic/" rel="next" title="Terraform 初學">
-                  Terraform 初學 <i class="fa fa-angle-right"></i>
+                <a href="/2025/03/14/terraform-module/" rel="next" title="Terraform module 練習">
+                  Terraform module 練習 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
