@@ -140,14 +140,14 @@ tags: hexo
 
     
 - 測試就會看到網站樣貌已改變
-```
-hexo clean
-hexo generate
-hexo server
-```
+    ```
+    hexo clean
+    hexo generate
+    hexo server
+    ```
 
 ---
 
 相關文章
 * [Hexo-NexT 增加側欄功能](https://lilylinzz.github.io/2025/03/12/hexo-sidebar/)
-* [Hexo-Next 版面調整](https://lilylinzz.github.io/2025/03/12/windows-terminal/)
+* [Hexo-NexT 版面調整](https://lilylinzz.github.io/2025/03/12/windows-terminal/)
