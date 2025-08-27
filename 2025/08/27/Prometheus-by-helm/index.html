@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lilylinzz.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Kube-Prometheus-Stack 已經將整組 prometheus 打包好，非常方便，本篇簡單紀錄安裝過程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Prometheus-by-helm">
+<meta property="og:url" content="https://lilylinzz.github.io/2025/08/27/Prometheus-by-helm/index.html">
+<meta property="og:site_name" content="Lily&#39;s blog">
+<meta property="og:description" content="Kube-Prometheus-Stack 已經將整組 prometheus 打包好，非常方便，本篇簡單紀錄安裝過程。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2025-08-27T08:33:40.000Z">
+<meta property="article:modified_time" content="2025-08-27T08:38:04.024Z">
+<meta property="article:author" content="Lily Lin">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="monitor">
+<meta property="article:tag" content="helm">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lilylinzz.github.io/2025/08/27/Prometheus-by-helm/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://lilylinzz.github.io/2025/08/27/Prometheus-by-helm/","path":"2025/08/27/Prometheus-by-helm/","title":"Prometheus-by-helm"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Prometheus-by-helm | Lily's blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Lily's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分類</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜尋
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜尋..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Helm-%E5%AE%89%E8%A3%9D"><span class="nav-number">1.</span> <span class="nav-text">Helm 安裝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%9D-Kube-Prometheus-Stack"><span class="nav-number">2.</span> <span class="nav-text">安裝 Kube-Prometheus-Stack</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%9C%A8%E6%9C%AC%E5%9C%B0%E6%B7%BB%E5%8A%A0-Helm-Chart-%E5%80%89%E5%BA%AB"><span class="nav-number">2.1.</span> <span class="nav-text">1.在本地添加 Helm Chart 倉庫</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%B0%87-values-yaml-%E8%A4%87%E8%A3%BD%E5%88%B0%E6%9C%AC%E6%A9%9F%EF%BC%8C%E4%BB%A5%E4%BE%BF%E5%BE%8C%E7%BA%8C%E8%AA%BF%E6%95%B4"><span class="nav-number">2.2.</span> <span class="nav-text">2. 將 values.yaml 複製到本機，以便後續調整</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-helm-install"><span class="nav-number">2.3.</span> <span class="nav-text">3. helm install</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A2%BA%E8%AA%8D-Dashboard"><span class="nav-number">3.</span> <span class="nav-text">確認 Dashboard</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B0%8E%E5%87%BA-Prometheus-Dashboard"><span class="nav-number">3.1.</span> <span class="nav-text">1.導出 Prometheus Dashboard</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%B0%8E%E5%87%BA-Grafana-Dashboard"><span class="nav-number">3.2.</span> <span class="nav-text">2.導出 Grafana Dashboard</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lily Lin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Lily Lin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://lilylinzz.github.io/" title="GitHub → https:&#x2F;&#x2F;lilylinzz.github.io&#x2F;" rel="noopener me"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:lingaadin@gmail.com" title="E-Mail → mailto:lingaadin@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/lilylin-94a835229" title="Linkedin → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;lilylin-94a835229" rel="noopener me" target="_blank"><i class="fab fa-linkedin-in fa-fw"></i></a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://lilylinzz.github.io/2025/08/27/Prometheus-by-helm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Lily Lin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lily's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Prometheus-by-helm | Lily's blog">
+      <meta itemprop="description" content="Kube-Prometheus-Stack 已經將整組 prometheus 打包好，非常方便，本篇簡單紀錄安裝過程。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Prometheus-by-helm
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2025-08-27 16:33:40 / 修改時間：16:38:04" itemprop="dateCreated datePublished" datetime="2025-08-27T16:33:40+08:00">2025-08-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">技術文件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">Kube-Prometheus-Stack 已經將整組 prometheus 打包好，非常方便，本篇簡單紀錄安裝過程。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Helm-安裝"><a href="#Helm-安裝" class="headerlink" title="Helm 安裝"></a>Helm 安裝</h2><p>安裝方式可參考 <a target="_blank" rel="noopener" href="https://helm.sh/zh/docs/intro/install/">Helm官網</a></p>
+<hr>
+<h2 id="安裝-Kube-Prometheus-Stack"><a href="#安裝-Kube-Prometheus-Stack" class="headerlink" title="安裝 Kube-Prometheus-Stack"></a>安裝 Kube-Prometheus-Stack</h2><p>來源： <a target="_blank" rel="noopener" href="https://github.com/prometheus-community/helm-charts">Kube-Prometheus-Stack</a></p>
+<h3 id="1-在本地添加-Helm-Chart-倉庫"><a href="#1-在本地添加-Helm-Chart-倉庫" class="headerlink" title="1.在本地添加 Helm Chart 倉庫"></a>1.在本地添加 Helm Chart 倉庫</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm repo add prometheus-community https://prometheus-community.github.io/helm-charts</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-將-values-yaml-複製到本機，以便後續調整"><a href="#2-將-values-yaml-複製到本機，以便後續調整" class="headerlink" title="2. 將 values.yaml 複製到本機，以便後續調整"></a>2. 將 values.yaml 複製到本機，以便後續調整</h3><h3 id="3-helm-install"><a href="#3-helm-install" class="headerlink" title="3. helm install"></a>3. helm install</h3><p>–values 改為自己的 values.yaml 檔案路徑</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm upgrade --install prometheus-stack prometheus-community/kube-prometheus-stack --values=values.yaml -n prometheus --create-namespace</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>到這邊基本上就算是安裝好了</p>
+</blockquote>
+<h2 id="確認-Dashboard"><a href="#確認-Dashboard" class="headerlink" title="確認 Dashboard"></a>確認 Dashboard</h2><h3 id="1-導出-Prometheus-Dashboard"><a href="#1-導出-Prometheus-Dashboard" class="headerlink" title="1.導出 Prometheus Dashboard"></a>1.導出 Prometheus Dashboard</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl port-forward service/prometheus-stack-kube-prom-prometheus 9090:9090 -n prometheus</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-導出-Grafana-Dashboard"><a href="#2-導出-Grafana-Dashboard" class="headerlink" title="2.導出 Grafana Dashboard"></a>2.導出 Grafana Dashboard</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl port-forward service/prometheus-stack-grafana 3000:80 -n prometheus</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Grafana 預設帳密：admin&#x2F;prom-operator</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+              <a href="/tags/monitor/" rel="tag"># monitor</a>
+              <a href="/tags/helm/" rel="tag"># helm</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/14/terraform-for-each/" rel="prev" title="Terraform for_each 練習">
+                  <i class="fa fa-angle-left"></i> Terraform for_each 練習
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa-regular fa-star"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Lily Lin</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
