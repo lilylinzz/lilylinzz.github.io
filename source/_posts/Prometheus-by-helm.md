@@ -1,20 +1,22 @@
 ---
-title: 透過 helm 建立 Prometheus
-date: 2025-08-27 10:50:29
-description: [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts) 已經將整組 prometheus 打包好，非常方便，本篇簡單紀錄安裝過程。
-categories: 
+title: Prometheus-by-helm
+date: 2025-08-27 16:33:40
+description: Kube-Prometheus-Stack 已經將整組 prometheus 打包好，非常方便，本篇簡單紀錄安裝過程。
+categories:
   - [技術文件, k8s]
 tags:
-    - k8s
-    - helm
-    - monitor
-
+  - k8s
+  - helm
+  - monitor
 ---
+
 ## Helm 安裝
 安裝方式可參考 [Helm官網](https://helm.sh/zh/docs/intro/install/)
 
 ---
 ## 安裝 Kube-Prometheus-Stack
+來源： [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts)
+
 ### 1.在本地添加 Helm Chart 倉庫
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
